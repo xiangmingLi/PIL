@@ -2,34 +2,35 @@
 
 Tensorflow implementation for PIL.
 
-
-## Abstract
-
-In this paper, we uncover the issue of knowledge inertia in visual question answering (VQA), which commonly exists in most VQA models and forces the models to mainly rely on the question content to “guess” answer, without regard to the visual information. Such an issue not only impairs the performance of VQA models, but also greatly reduces the credibility of the answer prediction. To this end, simply highlighting the visual features in the model is undoable, since the prediction is built upon the joint modeling of two modalities and largely influenced by the data distribution. In this paper, we propose a Pairwise Inconformity Learning (PIL) to tackle the issue of knowledge inertia. In particular, PIL takes full advantage of the similar image pairs with diverse answers to an identical question provided in VQA2.0 dataset. It builds a multi-modal embedding space to project pos./neg. feature pairs, upon which word vectors of answers are modeled as anchors. By doing so, PIL strengthens the importance of visual features in prediction with a novel dynamic-margin based triplet loss that efficiently increases the semantic discrepancies between pos./neg. image pairs. To verify the proposed PIL, we plug it on a baseline VQA model as well as a set of recent VQA models, and conduct extensive experiments on two benchmark datasets, i.e., VQA1.0 and VQA2.0. Experimental results show that PIL can boost the accuracy of the existing VQA models (1.56%-2.93% gain) with a negligible increase in parameters (0.85%-5.4% parameters). Qualitative results also reveal the elimination of knowledge inertia in the existing VQA models after implementing our PIL.
-
-
 ## Citation
 If you find PIL useful in your research, please consider citing:
 
 ```
 @inproceedings{AAAI: 19,
-  Author={Yiyi Zhou, Rongrong Ji, Jinsong Su, Xiangming Li ,Xiaoshuai Sun},
-  Title={Free VQA Models from Knowledge Inertia By Pairwise Inconformity Learning},
-  Booktitle={Thirty-Third AAAI Conference on Artificial Intelligence},
-  Year={2019}, Accept}
+Author={Yiyi Zhou, Rongrong Ji, Jinsong Su, Xiangming Li ,Xiaoshuai Sun},
+Title={Free VQA Models from Knowledge Inertia By Pairwise Inconformity Learning},
+Booktitle={Thirty-Third AAAI Conference on Artificial Intelligence},
+Year={2019}}
 ```
 
 ## Running Code
 
 In this code, you can run our model on VQA2.0 dataset. The code has been tested by Python 2.7, [tensorflow 1.8.0] and CUDA 9.0 on Ubuntu 16.04.
 
+##Preprocessing
+In terms of the baseline model, we use the Glove Embedding as the word input with a dimension of 300. The dimension of the LSTM module is 2048, while the k and o in MFB fusion are set to 5 and 1000, respectively. The dimensions of the last forward layer and the projections are set to 2048 and 300. The initial learning rate is 7e-4, which is halved after every 25,000 steps. The batch size is 64 and the maximum training step is set to 150,000. The optimizer we used is Adam.
+During experiments, we use two types of visual inputs, i.e., the last feature map of ResNet-
+152 with a size of 14*14*2048 and the regional features released by with a size of 36*2048. For simplicity, we denote them as CNN and FRCNN.(The code we currently provide is using the CNN feature). Before training, you should put the features in DATA and then update the path in the config.py file.
+
 ## Running Example
 
 ### Train
 
-```shell
-python train.py
-```
+To train a model, edit the corresponding config.py file.
+
+In config.py, the TRAIN_DATA_SPLITS, QUESTION_VOCAB_SPACE, and ANSWER_VOCAB_SPACE parameters take a + delimited string of data sources, which are specified in the DATA_PATHS dictionary. We recommend using train+val for training.Remember to set GPU_ID and path correctly.
+
+Now just run python train.py. Training can take some time. Snapshots are saved according to the settings in config.py. To stop training, just hit Control + C.
 
 ## Tips
 
